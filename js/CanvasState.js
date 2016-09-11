@@ -20,8 +20,6 @@ var CanvasState = (function () {
         this.selection = null;
         this.drawX = 0;
         this.dragY = 0;
-        this.selectionColor = "#000";
-        this.selectionWidth = 1;
         this.imageSrc = imageSrc;
         this.canvas.addEventListener('selectstart', function (e) {
             e.preventDefault();
@@ -33,11 +31,10 @@ var CanvasState = (function () {
             var l = _this.images.length;
             for (var i = l - 1; i >= 0; i--) {
                 if (_this.images[i].contains(mx, my)) {
-                    var mySel = _this.images[i];
-                    _this.drawX = mx - mySel.x;
-                    _this.dragY = my - mySel.y;
+                    _this.drawX = mx - _this.images[i].x;
+                    _this.dragY = my - _this.images[i].y;
                     _this.dragging = true;
-                    _this.selection = mySel;
+                    _this.selection = _this.images[i];
                     _this.valid = false;
                     return;
                 }
@@ -87,7 +84,6 @@ var CanvasState = (function () {
         this.clear(true);
     }
     CanvasState.prototype.draw = function () {
-        var _this = this;
         if (!this.valid) {
             this.clear(false);
             for (var i = 0; i < this.images.length; i++) {
@@ -101,22 +97,7 @@ var CanvasState = (function () {
                 this.lines[i].draw(this.ctx);
             }
             if (this.selection != null) {
-                this.ctx.strokeStyle = this.selectionColor;
-                this.ctx.lineWidth = this.selectionWidth;
-                var mySel = this.selection;
-                this.ctx.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
-                this.ctx.beginPath();
-                var lineStyle = "\n                    fill: none;\n                    fill-rule: evenodd;\n                    stroke: #000000;\n                    stroke-width: 2;\n                    stroke-linecap: round;\n                    stroke-linejoin: miter;\n                    stroke-opacity: 1;\n                    stroke-miterlimit: 4;";
-                var iconDimensions = 10;
-                var data = "\n                    <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + iconDimensions + "\" width=\"" + iconDimensions + "\">\n                        <path d=\"M 1.5,1.5 8.5,8.5\" style=\"" + lineStyle + "\" />\n                        <path d=\"M 1.5,8.5 8.5,1.5\" style=\"" + lineStyle + "\" />\n                    </svg>";
-                var img = new Image();
-                var svg = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
-                var url = URL.createObjectURL(svg);
-                img.onload = function () {
-                    _this.ctx.drawImage(img, mySel.x + mySel.w, mySel.y - 10);
-                    URL.revokeObjectURL(url);
-                };
-                img.src = url;
+                this.selection.setSelected(this.ctx);
             }
             this.valid = true;
         }

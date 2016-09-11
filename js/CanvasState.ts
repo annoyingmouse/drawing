@@ -16,8 +16,6 @@ class CanvasState {
     selection: CanvasImage;
     drawX: number;
     dragY: number;
-    selectionColor: string;
-    selectionWidth: number;
     imageSrc: string;
     // Line Drawing
     line: CanvasLine;
@@ -38,8 +36,6 @@ class CanvasState {
         this.selection = null;
         this.drawX = 0;
         this.dragY = 0;
-        this.selectionColor = "#000";
-        this.selectionWidth = 1;
         this.imageSrc = imageSrc;
 
         this.canvas.addEventListener('selectstart', (e)=> {
@@ -52,11 +48,10 @@ class CanvasState {
             var l = this.images.length;
             for (var i = l - 1; i >= 0; i--) {
                 if (this.images[i].contains(mx, my)) {
-                    var mySel = this.images[i];
-                    this.drawX = mx - mySel.x;
-                    this.dragY = my - mySel.y;
+                    this.drawX = mx - this.images[i].x;
+                    this.dragY = my - this.images[i].y;
                     this.dragging = true;
-                    this.selection = mySel;
+                    this.selection = this.images[i];
                     this.valid = false;
                     return;
                 } else if (this.images[i].containsDelete(mx, my)) {
@@ -117,35 +112,7 @@ class CanvasState {
                 this.lines[i].draw(this.ctx);
             }
             if (this.selection != null) {
-                this.ctx.strokeStyle = this.selectionColor;
-                this.ctx.lineWidth = this.selectionWidth;
-                var mySel = this.selection;
-                this.ctx.strokeRect(mySel.x, mySel.y, mySel.w, mySel.h);
-                this.ctx.beginPath();
-
-                var lineStyle: string = `
-                    fill: none;
-                    fill-rule: evenodd;
-                    stroke: #000000;
-                    stroke-width: 2;
-                    stroke-linecap: round;
-                    stroke-linejoin: miter;
-                    stroke-opacity: 1;
-                    stroke-miterlimit: 4;`;
-                var iconDimensions: number = 10;
-                var data: string = `
-                    <svg xmlns="http://www.w3.org/2000/svg" height="${iconDimensions}" width="${iconDimensions}">
-                        <path d="M 1.5,1.5 8.5,8.5" style="${lineStyle}" />
-                        <path d="M 1.5,8.5 8.5,1.5" style="${lineStyle}" />
-                    </svg>`;
-                var img: HTMLImageElement = new Image();
-                var svg: any = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
-                var url = URL.createObjectURL(svg);
-                img.onload = ()=> {
-                    this.ctx.drawImage(img, mySel.x + mySel.w, mySel.y - 10);
-                    URL.revokeObjectURL(url);
-                };
-                img.src = url;
+                this.selection.setSelected(this.ctx);
             }
             this.valid = true;
         }

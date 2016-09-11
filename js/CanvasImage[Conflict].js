@@ -34,20 +34,10 @@ var CanvasImage = (function (_super) {
         return containedWithin(new BoundingBox(this.x + this.w, this.x + this.w + this.iconWidth, this.y - this.iconWidth, this.y), mx, my);
     };
     CanvasImage.prototype.setSelected = function (ctx) {
-        var _this = this;
-        ctx.strokeStyle = this.selectionColor;
-        ctx.lineWidth = this.selectionWidth;
+        this.ctx.strokeStyle = this.selectionColor;
+        this.ctx.lineWidth = this.selectionWidth;
         ctx.strokeRect(this.x, this.y, this.w, this.h);
-        var lineStyle = "\n            fill: none;\n            fill-rule: evenodd;\n            stroke: #000000;\n            stroke-width: 2;\n            stroke-linecap: round;\n            stroke-linejoin: miter;\n            stroke-opacity: 1;\n            stroke-miterlimit: 4;";
-        var data = "\n            <svg xmlns=\"http://www.w3.org/2000/svg\" height=\"" + this.iconWidth + "\" width=\"" + this.iconWidth + "\">\n                <path d=\"M 1.5,1.5 8.5,8.5\" style=\"" + lineStyle + "\" />\n                <path d=\"M 1.5,8.5 8.5,1.5\" style=\"" + lineStyle + "\" />\n            </svg>";
-        var img = new Image();
-        var svg = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
-        var url = URL.createObjectURL(svg);
-        img.onload = function () {
-            ctx.drawImage(img, _this.x + _this.w, _this.y - 10);
-            URL.revokeObjectURL(url);
-        };
-        img.src = url;
+        ctx.beginPath();
     };
     return CanvasImage;
 }(CanvasElement));
