@@ -21,6 +21,17 @@ var CanvasState = (function () {
         this.drawX = 0;
         this.dragY = 0;
         this.imageSrc = imageSrc;
+        var tempLine = [
+            [676, 76],
+            [606, 106],
+            [518, 123]
+        ];
+        this.line = new CanvasLine(722, 54);
+        this.lines.push(this.line);
+        for (var i = 0; i < tempLine.length; i++) {
+            this.line.points.push(tempLine[i]);
+        }
+        this.draw();
         this.canvas.addEventListener('selectstart', function (e) {
             e.preventDefault();
             return false;
@@ -28,7 +39,15 @@ var CanvasState = (function () {
         this.canvas.addEventListener('mousedown', function (e) {
             var mx = e.layerX;
             var my = e.layerY;
-            var l = _this.images.length;
+            var l;
+            l = _this.lines.length;
+            console.log(l);
+            for (var i = l - 1; i >= 0; i--) {
+                if (_this.lines[i].contains(mx, my, _this.ctx)) {
+                    console.log("clicked a line");
+                }
+            }
+            l = _this.images.length;
             for (var i = l - 1; i >= 0; i--) {
                 if (_this.images[i].contains(mx, my)) {
                     _this.drawX = mx - _this.images[i].x;

@@ -12,6 +12,7 @@ var CanvasImage = (function (_super) {
     function CanvasImage(x, y, id, iconWidth) {
         if (iconWidth === void 0) { iconWidth = 10; }
         _super.call(this, x, y, iconWidth);
+        this.type = "image";
         var original = document.getElementById(id);
         var img = document.createElement("img");
         img.width = +original.getAttribute("width");

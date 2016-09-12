@@ -5,6 +5,7 @@ class CanvasElement {
     x: number;
     y: number;
     iconWidth: number;
+    type: string;
 
     constructor(x: number, y: number, iconWidth: number = 10) {
         this.x = x;

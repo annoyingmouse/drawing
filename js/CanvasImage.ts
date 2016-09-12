@@ -11,6 +11,7 @@ class CanvasImage extends CanvasElement {
 
     constructor(x: number, y: number, id: string, iconWidth: number = 10) {
         super(x, y, iconWidth);
+        this.type = "image";
         var original: HTMLElement = document.getElementById(id);
         var img: HTMLImageElement = document.createElement("img");
         img.width = +original.getAttribute("width");

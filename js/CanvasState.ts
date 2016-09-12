@@ -38,6 +38,22 @@ class CanvasState {
         this.dragY = 0;
         this.imageSrc = imageSrc;
 
+        var tempLine = [
+            [676,76],
+            [606,106],
+            [518,123]
+        ];
+        this.line = new CanvasLine(722, 54);
+        this.lines.push(this.line);
+        for(var i = 0; i < tempLine.length; i++){
+            this.line.points.push(tempLine[i]);
+        }
+        this.draw();
+
+
+
+
+
         this.canvas.addEventListener('selectstart', (e)=> {
             e.preventDefault();
             return false;
@@ -45,7 +61,20 @@ class CanvasState {
         this.canvas.addEventListener('mousedown', (e)=> {
             var mx = e.layerX;
             var my = e.layerY;
-            var l = this.images.length;
+            var l:number;
+
+            l = this.lines.length;
+            console.log(l);
+            for (var i = l - 1; i >= 0; i--) {
+                if (this.lines[i].contains(mx, my, this.ctx)) {
+                    console.log("clicked a line");
+                }
+            }
+
+
+
+
+            l = this.images.length;
             for (var i = l - 1; i >= 0; i--) {
                 if (this.images[i].contains(mx, my)) {
                     this.drawX = mx - this.images[i].x;
@@ -60,6 +89,10 @@ class CanvasState {
                     break;
                 }
             }
+
+
+
+
             if (this.selection) {
                 this.selection = null;
                 this.valid = false; // Need to clear the old selection border
@@ -71,6 +104,9 @@ class CanvasState {
                     this.ctx.moveTo(e.layerX, e.layerY);
                 }
             }
+
+
+
             this.draw();
         }, true);
         this.canvas.addEventListener('mousemove', (e)=> {

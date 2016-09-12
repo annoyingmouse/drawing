@@ -11,9 +11,10 @@ var CanvasLine = (function (_super) {
     __extends(CanvasLine, _super);
     function CanvasLine(x, y, iconWidth, lineWidth, lineCap) {
         if (iconWidth === void 0) { iconWidth = 10; }
-        if (lineWidth === void 0) { lineWidth = 5; }
+        if (lineWidth === void 0) { lineWidth = 6; }
         if (lineCap === void 0) { lineCap = "round"; }
         _super.call(this, x, y, iconWidth);
+        this.type = "line";
         this.points = [];
         this.iconWidth = iconWidth;
         this.lineWidth = lineWidth;
@@ -30,14 +31,47 @@ var CanvasLine = (function (_super) {
         }
         ctx.stroke();
     };
-    CanvasLine.prototype.contains = function (mx, my) {
-        var coordinatesArray = [];
-        coordinatesArray.push([this.x, this.y]);
+    CanvasLine.prototype.contains = function (mx, my, ctx) {
+        var l = this.points.length;
+        var x1 = this.x;
+        var y1 = this.y;
+        var wd = this.lineWidth;
+        var x2, y2, coordinatesArray = [];
+        for (var i = 0; i < l; i++) {
+            var point = this.points[i];
+            x2 = this.points[i][0];
+            y2 = this.points[i][1];
+            var dx = Math.abs(x2 - x1);
+            var dy = Math.abs(y2 - y1);
+            var sx = (x1 < x2) ? 1 : -1;
+            var sy = (y1 < y2) ? 1 : -1;
+            var err = dx - dy;
+            // Set first coordinates
+            coordinatesArray.push([y1, x1]);
+            // Main loop
+            while (!((x1 == x2) && (y1 == y2))) {
+                var e2 = err << 1;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y1 += sy;
+                }
+                // Set coordinates
+                coordinatesArray.push([y1, x1]);
+                ctx.fillStyle = "#f00";
+                ctx.fillRect(x1, y1, 1, 1);
+            }
+            x1 = this.points[i][0];
+            y1 = this.points[i][1];
+        }
     };
     return CanvasLine;
 }(CanvasElement));
-console.log(calcStraightLine(0, 0, 3, 5));
-console.log(calcLine(0, 0, 3, 5, 2));
+// console.log(calcStraightLine(0,0,3,5));
+// console.log(calcLine(0,0,3,5,2));
 function calcStraightLine(x1, y1, x2, y2) {
     var coordinatesArray = [];
     // Translate coordinates
@@ -67,9 +101,11 @@ function calcStraightLine(x1, y1, x2, y2) {
     return coordinatesArray;
 }
 function calcLine(x0, y0, x1, y1, wd) {
+    var coordinatesArray = [];
     var dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
     var dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-    var err = dx - dy, e2, x2, y2; /* error value e_xy */
+    var err = dx - dy, e2, x2, y2;
+    /* error value e_xy */
     var ed = dx + dy == 0 ? 1 : Math.sqrt(dx * dx + dy * dy);
     var coordinatesArray = [];
     for (wd = (wd + 1) / 2;;) {
