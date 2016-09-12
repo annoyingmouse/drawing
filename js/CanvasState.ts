@@ -64,7 +64,6 @@ class CanvasState {
             var l:number;
 
             l = this.lines.length;
-            console.log(l);
             for (var i = l - 1; i >= 0; i--) {
                 if (this.lines[i].contains(mx, my, this.ctx)) {
                     console.log("clicked a line");

@@ -41,7 +41,6 @@ var CanvasState = (function () {
             var my = e.layerY;
             var l;
             l = _this.lines.length;
-            console.log(l);
             for (var i = l - 1; i >= 0; i--) {
                 if (_this.lines[i].contains(mx, my, _this.ctx)) {
                     console.log("clicked a line");
