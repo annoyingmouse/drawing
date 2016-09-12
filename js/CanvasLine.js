@@ -46,9 +46,9 @@ var CanvasLine = (function (_super) {
             var sx = (x1 < x2) ? 1 : -1;
             var sy = (y1 < y2) ? 1 : -1;
             var err = dx - dy;
-            // Set first coordinates
-            coordinatesArray.push([y1, x1]);
-            // Main loop
+            if (Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2)) < this.lineWidth / 2) {
+                return true;
+            }
             while (!((x1 == x2) && (y1 == y2))) {
                 var e2 = err << 1;
                 if (e2 > -dy) {
@@ -59,10 +59,10 @@ var CanvasLine = (function (_super) {
                     err += dx;
                     y1 += sy;
                 }
-                // Set coordinates
-                coordinatesArray.push([y1, x1]);
-                ctx.fillStyle = "#f00";
-                ctx.fillRect(x1, y1, 1, 1);
+                var d = Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2));
+                if (Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2)) < this.lineWidth / 2) {
+                    return true;
+                }
             }
             x1 = this.points[i][0];
             y1 = this.points[i][1];
