@@ -64,36 +64,3 @@ class CanvasImage extends CanvasElement {
         img.src = url;
     }
 }
-function containedWithin(obj: BoundingBox, x: number, y: number) {
-    return (obj.horizontal.left <= x)
-        && (obj.horizontal.right >= x)
-        && (obj.vertical.top <= y)
-        && (obj.vertical.bottom >= y);
-}
-class Horizontal {
-    left: number;
-    right: number;
-
-    constructor(left: number, right: number) {
-        this.left = left;
-        this.right = right;
-    }
-}
-class Vertical {
-    top: number;
-    bottom: number;
-
-    constructor(top: number, bottom: number) {
-        this.top = top;
-        this.bottom = bottom;
-    }
-}
-class BoundingBox {
-    horizontal: Horizontal;
-    vertical: Vertical;
-
-    constructor(left: number, right: number, top: number, bottom: number) {
-        this.horizontal = new Horizontal(left, right);
-        this.vertical = new Vertical(top, bottom);
-    }
-}

@@ -32,9 +32,11 @@ var CanvasState = (function () {
                 l = _this.elements.length;
                 for (var i = l - 1; i >= 0; i--) {
                     if (_this.elements[i].contains(mx, my)) {
-                        _this.drawX = mx - _this.elements[i].x;
-                        _this.dragY = my - _this.elements[i].y;
-                        _this.dragging = true;
+                        if (_this.elements[i].type === "image") {
+                            _this.drawX = mx - _this.elements[i].x;
+                            _this.dragY = my - _this.elements[i].y;
+                            _this.dragging = true;
+                        }
                         _this.selection = _this.elements[i];
                         _this.valid = false;
                         return;

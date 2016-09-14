@@ -22,3 +22,30 @@ var CanvasElement = (function () {
     };
     return CanvasElement;
 }());
+function containedWithin(obj, x, y) {
+    return (obj.horizontal.left <= x)
+        && (obj.horizontal.right >= x)
+        && (obj.vertical.top <= y)
+        && (obj.vertical.bottom >= y);
+}
+var Horizontal = (function () {
+    function Horizontal(left, right) {
+        this.left = left;
+        this.right = right;
+    }
+    return Horizontal;
+}());
+var Vertical = (function () {
+    function Vertical(top, bottom) {
+        this.top = top;
+        this.bottom = bottom;
+    }
+    return Vertical;
+}());
+var BoundingBox = (function () {
+    function BoundingBox(left, right, top, bottom) {
+        this.horizontal = new Horizontal(left, right);
+        this.vertical = new Vertical(top, bottom);
+    }
+    return BoundingBox;
+}());

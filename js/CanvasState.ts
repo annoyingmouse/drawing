@@ -47,9 +47,11 @@ class CanvasState {
                 l = this.elements.length;
                 for (var i = l - 1; i >= 0; i--) {
                     if (this.elements[i].contains(mx, my)) {
-                        this.drawX = mx - this.elements[i].x;
-                        this.dragY = my - this.elements[i].y;
-                        this.dragging = true;
+                        if (this.elements[i].type === "image") {
+                            this.drawX = mx - this.elements[i].x;
+                            this.dragY = my - this.elements[i].y;
+                            this.dragging = true;
+                        }
                         this.selection = this.elements[i];
                         this.valid = false;
                         return;
