@@ -9,21 +9,24 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="CanvasElement.ts" />
 var CanvasLine = (function (_super) {
     __extends(CanvasLine, _super);
-    function CanvasLine(x, y, iconWidth, lineWidth, lineCap) {
+    function CanvasLine(x, y, iconWidth, lineWidth, lineCap, lineColour) {
         if (iconWidth === void 0) { iconWidth = 10; }
         if (lineWidth === void 0) { lineWidth = 6; }
         if (lineCap === void 0) { lineCap = "round"; }
+        if (lineColour === void 0) { lineColour = "#000"; }
         _super.call(this, x, y, iconWidth);
         this.type = "line";
         this.points = [];
         this.iconWidth = iconWidth;
         this.lineWidth = lineWidth;
         this.lineCap = lineCap;
+        this.lineColour = lineColour;
     }
     CanvasLine.prototype.draw = function (ctx) {
         ctx.beginPath();
         ctx.lineWidth = this.lineWidth;
         ctx.lineCap = this.lineCap;
+        ctx.strokeStyle = this.lineColour;
         ctx.moveTo(this.x, this.y);
         for (var i = 0; i < this.points.length; i++) {
             var point = this.points[i];
@@ -67,6 +70,14 @@ var CanvasLine = (function (_super) {
             x1 = this.points[i][0];
             y1 = this.points[i][1];
         }
+        return false;
+    };
+    CanvasLine.prototype.containsDelete = function (mx, my) {
+        return false;
+    };
+    CanvasLine.prototype.setSelected = function (ctx) {
+        console.log(this.lineColour);
+        console.log("Set selected here!");
     };
     return CanvasLine;
 }(CanvasElement));

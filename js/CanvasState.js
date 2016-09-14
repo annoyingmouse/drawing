@@ -14,67 +14,51 @@ var CanvasState = (function () {
         this.ctx.lineWidth = 5;
         this.ctx.lineCap = "round";
         this.valid = false;
-        this.images = [];
-        this.lines = [];
+        this.elements = [];
         this.dragging = false;
         this.selection = null;
         this.drawX = 0;
         this.dragY = 0;
         this.imageSrc = imageSrc;
-        var tempLine = [
-            [676, 76],
-            [606, 106],
-            [518, 123]
-        ];
-        this.line = new CanvasLine(722, 54);
-        this.lines.push(this.line);
-        for (var i = 0; i < tempLine.length; i++) {
-            this.line.points.push(tempLine[i]);
-        }
-        this.draw();
         this.canvas.addEventListener('selectstart', function (e) {
             e.preventDefault();
             return false;
         }, false);
         this.canvas.addEventListener('mousedown', function (e) {
-            var mx = e.layerX;
-            var my = e.layerY;
-            var l;
-            l = _this.lines.length;
-            for (var i = l - 1; i >= 0; i--) {
-                if (_this.lines[i].contains(mx, my, _this.ctx)) {
-                    console.log("clicked a line");
+            if (!e.button) {
+                var mx = e.layerX;
+                var my = e.layerY;
+                var l;
+                l = _this.elements.length;
+                for (var i = l - 1; i >= 0; i--) {
+                    if (_this.elements[i].contains(mx, my)) {
+                        _this.drawX = mx - _this.elements[i].x;
+                        _this.dragY = my - _this.elements[i].y;
+                        _this.dragging = true;
+                        _this.selection = _this.elements[i];
+                        _this.valid = false;
+                        return;
+                    }
+                    else if (_this.elements[i].containsDelete(mx, my)) {
+                        _this.elements.splice(i, 1);
+                        _this.valid = false;
+                        break;
+                    }
                 }
-            }
-            l = _this.images.length;
-            for (var i = l - 1; i >= 0; i--) {
-                if (_this.images[i].contains(mx, my)) {
-                    _this.drawX = mx - _this.images[i].x;
-                    _this.dragY = my - _this.images[i].y;
-                    _this.dragging = true;
-                    _this.selection = _this.images[i];
-                    _this.valid = false;
-                    return;
+                if (_this.selection) {
+                    _this.selection = null;
+                    _this.valid = false; // Need to clear the old selection border
                 }
-                else if (_this.images[i].containsDelete(mx, my)) {
-                    _this.images.splice(i, 1);
-                    _this.valid = false;
-                    break;
+                else {
+                    if (!_this.drawing) {
+                        _this.drawing = true;
+                        _this.element = new CanvasLine(e.layerX, e.layerY);
+                        _this.elements.push(_this.element);
+                        _this.ctx.moveTo(e.layerX, e.layerY);
+                    }
                 }
+                _this.draw();
             }
-            if (_this.selection) {
-                _this.selection = null;
-                _this.valid = false; // Need to clear the old selection border
-            }
-            else {
-                if (!_this.drawing) {
-                    _this.drawing = true;
-                    _this.line = new CanvasLine(e.layerX, e.layerY);
-                    _this.lines.push(_this.line);
-                    _this.ctx.moveTo(e.layerX, e.layerY);
-                }
-            }
-            _this.draw();
         }, true);
         this.canvas.addEventListener('mousemove', function (e) {
             if (_this.dragging) {
@@ -84,7 +68,7 @@ var CanvasState = (function () {
             }
             else {
                 if (_this.drawing) {
-                    _this.line.points.push([e.layerX, e.layerY]);
+                    _this.element.points.push([e.layerX, e.layerY]);
                     _this.ctx.lineTo(e.layerX, e.layerY);
                     _this.ctx.stroke();
                 }
@@ -104,15 +88,12 @@ var CanvasState = (function () {
     CanvasState.prototype.draw = function () {
         if (!this.valid) {
             this.clear(false);
-            for (var i = 0; i < this.images.length; i++) {
-                var image = this.images[i];
+            for (var i = 0; i < this.elements.length; i++) {
+                var image = this.elements[i];
                 if (image.x > this.width || image.y > this.height) {
                     continue;
                 }
-                this.images[i].draw(this.ctx);
-            }
-            for (var i = 0; i < this.lines.length; i++) {
-                this.lines[i].draw(this.ctx);
+                this.elements[i].draw(this.ctx);
             }
             if (this.selection != null) {
                 this.selection.setSelected(this.ctx);
@@ -139,7 +120,7 @@ var CanvasState = (function () {
         }
     };
     CanvasState.prototype.addImage = function (image) {
-        this.images.push(image);
+        this.elements.push(image);
         this.selection = null;
         this.valid = false;
     };

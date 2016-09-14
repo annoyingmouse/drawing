@@ -6,20 +6,23 @@ class CanvasLine extends CanvasElement {
     points: number[][];
     lineWidth: number;
     lineCap: string;
+    lineColour: string;
 
-    constructor(x: number, y: number, iconWidth: number = 10, lineWidth: number = 6, lineCap: string = "round") {
+    constructor(x: number, y: number, iconWidth: number = 10, lineWidth: number = 6, lineCap: string = "round", lineColour: string = "#000") {
         super(x, y, iconWidth);
         this.type = "line";
         this.points = [];
         this.iconWidth = iconWidth;
         this.lineWidth = lineWidth;
         this.lineCap = lineCap;
+        this.lineColour = lineColour
     }
 
     draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.lineWidth = this.lineWidth;
         ctx.lineCap = this.lineCap;
+        ctx.strokeStyle = this.lineColour;
         ctx.moveTo(this.x, this.y);
         for (var i: number = 0; i < this.points.length; i++) {
             var point = this.points[i];
@@ -28,12 +31,12 @@ class CanvasLine extends CanvasElement {
         ctx.stroke();
     }
 
-    contains(mx, my, ctx) {
+    contains(mx:number, my:number, ctx: CanvasRenderingContext2D) {
         var l: number = this.points.length;
         var x1: number = this.x;
         var y1: number = this.y;
         var wd: number = this.lineWidth;
-        var x2:number, y2:number, coordinatesArray = [];
+        var x2: number, y2: number, coordinatesArray = [];
         for (var i: number = 0; i < l; i++) {
             var point = this.points[i];
             x2 = this.points[i][0];
@@ -43,7 +46,7 @@ class CanvasLine extends CanvasElement {
             var sx = (x1 < x2) ? 1 : -1;
             var sy = (y1 < y2) ? 1 : -1;
             var err = dx - dy;
-            if(Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1),2)) < this.lineWidth / 2){
+            if (Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2)) < this.lineWidth / 2) {
                 return true;
             }
             while (!((x1 == x2) && (y1 == y2))) {
@@ -56,15 +59,26 @@ class CanvasLine extends CanvasElement {
                     err += dx;
                     y1 += sy;
                 }
-                var d = Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1),2));
-                if(Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1),2)) < this.lineWidth / 2){
+                var d = Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2));
+                if (Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2)) < this.lineWidth / 2) {
                     return true;
                 }
             }
             x1 = this.points[i][0];
             y1 = this.points[i][1];
         }
+        return false;
     }
+
+    containsDelete(mx: number, my: number) {
+        return false;
+    }
+
+    setSelected(ctx: CanvasRenderingContext2D){
+        console.log(this.lineColour);
+        console.log("Set selected here!");
+    }
+
 }
 
 

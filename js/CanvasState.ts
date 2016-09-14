@@ -11,15 +11,13 @@ class CanvasState {
     height: number;
     ctx: CanvasRenderingContext2D;
     valid: boolean;
-    images: CanvasImage[];
+    elements: CanvasElement[];
     dragging: boolean;
-    selection: CanvasImage;
+    selection: CanvasElement;
+    element: CanvasElement;
     drawX: number;
     dragY: number;
     imageSrc: string;
-    // Line Drawing
-    line: CanvasLine;
-    lines: CanvasLine[];
     drawing: boolean;
 
     constructor(canvas: HTMLCanvasElement, imageSrc: string = "img/grass.jpg") {
@@ -30,83 +28,50 @@ class CanvasState {
         this.ctx.lineWidth = 5;
         this.ctx.lineCap = "round";
         this.valid = false;
-        this.images = [];
-        this.lines = [];
+        this.elements = [];
         this.dragging = false;
         this.selection = null;
         this.drawX = 0;
         this.dragY = 0;
         this.imageSrc = imageSrc;
 
-        var tempLine = [
-            [676,76],
-            [606,106],
-            [518,123]
-        ];
-        this.line = new CanvasLine(722, 54);
-        this.lines.push(this.line);
-        for(var i = 0; i < tempLine.length; i++){
-            this.line.points.push(tempLine[i]);
-        }
-        this.draw();
-
-
-
-
-
         this.canvas.addEventListener('selectstart', (e)=> {
             e.preventDefault();
             return false;
         }, false);
         this.canvas.addEventListener('mousedown', (e)=> {
-            var mx = e.layerX;
-            var my = e.layerY;
-            var l:number;
-
-            l = this.lines.length;
-            for (var i = l - 1; i >= 0; i--) {
-                if (this.lines[i].contains(mx, my, this.ctx)) {
-                    console.log("clicked a line");
+            if (!e.button) {
+                var mx = e.layerX;
+                var my = e.layerY;
+                var l: number;
+                l = this.elements.length;
+                for (var i = l - 1; i >= 0; i--) {
+                    if (this.elements[i].contains(mx, my)) {
+                        this.drawX = mx - this.elements[i].x;
+                        this.dragY = my - this.elements[i].y;
+                        this.dragging = true;
+                        this.selection = this.elements[i];
+                        this.valid = false;
+                        return;
+                    } else if (this.elements[i].containsDelete(mx, my)) {
+                        this.elements.splice(i, 1);
+                        this.valid = false;
+                        break;
+                    }
                 }
-            }
-
-
-
-
-            l = this.images.length;
-            for (var i = l - 1; i >= 0; i--) {
-                if (this.images[i].contains(mx, my)) {
-                    this.drawX = mx - this.images[i].x;
-                    this.dragY = my - this.images[i].y;
-                    this.dragging = true;
-                    this.selection = this.images[i];
-                    this.valid = false;
-                    return;
-                } else if (this.images[i].containsDelete(mx, my)) {
-                    this.images.splice(i, 1);
-                    this.valid = false;
-                    break;
+                if (this.selection) {
+                    this.selection = null;
+                    this.valid = false; // Need to clear the old selection border
+                } else {
+                    if (!this.drawing) {
+                        this.drawing = true;
+                        this.element = new CanvasLine(e.layerX, e.layerY);
+                        this.elements.push(this.element);
+                        this.ctx.moveTo(e.layerX, e.layerY);
+                    }
                 }
+                this.draw();
             }
-
-
-
-
-            if (this.selection) {
-                this.selection = null;
-                this.valid = false; // Need to clear the old selection border
-            } else {
-                if (!this.drawing) {
-                    this.drawing = true;
-                    this.line = new CanvasLine(e.layerX, e.layerY);
-                    this.lines.push(this.line);
-                    this.ctx.moveTo(e.layerX, e.layerY);
-                }
-            }
-
-
-
-            this.draw();
         }, true);
         this.canvas.addEventListener('mousemove', (e)=> {
             if (this.dragging) {
@@ -115,7 +80,7 @@ class CanvasState {
                 this.valid = false;
             } else {
                 if (this.drawing) {
-                    this.line.points.push([e.layerX, e.layerY]);
+                    this.element.points.push([e.layerX, e.layerY]);
                     this.ctx.lineTo(e.layerX, e.layerY);
                     this.ctx.stroke();
                 }
@@ -136,15 +101,12 @@ class CanvasState {
     draw() {
         if (!this.valid) {
             this.clear(false);
-            for (var i = 0; i < this.images.length; i++) {
-                var image: CanvasImage = this.images[i];
+            for (var i = 0; i < this.elements.length; i++) {
+                var image: CanvasElement = this.elements[i];
                 if (image.x > this.width || image.y > this.height) {
                     continue;
                 }
-                this.images[i].draw(this.ctx);
-            }
-            for (var i = 0; i < this.lines.length; i++) {
-                this.lines[i].draw(this.ctx);
+                this.elements[i].draw(this.ctx);
             }
             if (this.selection != null) {
                 this.selection.setSelected(this.ctx);
@@ -153,7 +115,7 @@ class CanvasState {
         }
     }
 
-    clear(firstRun:boolean) {
+    clear(firstRun: boolean) {
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillStyle = "#ddd";
         this.ctx.fillRect(0, 0, this.width, this.height);
@@ -161,18 +123,18 @@ class CanvasState {
         img.width = this.width;
         img.height = this.height;
         img.src = this.imageSrc;
-        if(firstRun){
+        if (firstRun) {
             img.onload = ()=> {
                 this.ctx.drawImage(img, 0, 0);
             };
-        }else{
+        } else {
             this.ctx.drawImage(img, 0, 0);
         }
 
     }
 
     addImage(image) {
-        this.images.push(image);
+        this.elements.push(image);
         this.selection = null;
         this.valid = false;
     }

@@ -8,5 +8,17 @@ var CanvasElement = (function () {
         this.y = y;
         this.iconWidth = iconWidth;
     }
+    CanvasElement.prototype.draw = function (ctx) {
+        console.log("Drawing the element");
+    };
+    CanvasElement.prototype.contains = function (mx, my, ctx) {
+        console.log("Check to see if mouse click is contained within element");
+    };
+    CanvasElement.prototype.containsDelete = function (mx, my) {
+        console.log("Check to see if mouse click is contained within the element delete icon");
+    };
+    CanvasElement.prototype.setSelected = function (ctx) {
+        console.log("Setting selected element");
+    };
     return CanvasElement;
 }());
