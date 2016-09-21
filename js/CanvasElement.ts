@@ -7,6 +7,9 @@ class CanvasElement {
     iconWidth: number;
     type: string;
     points: number[][];
+    lineColour: string;
+    lineWidth: number;
+    lineStyle: string;
 
     constructor(x: number, y: number, iconWidth: number = 10) {
         this.x = x;

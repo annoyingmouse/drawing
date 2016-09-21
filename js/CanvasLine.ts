@@ -8,8 +8,9 @@ class CanvasLine extends CanvasElement {
     lineCap: string;
     lineColour: string;
     selected: boolean;
+    lineStyle: string;
 
-    constructor(x: number, y: number, iconWidth: number = 10, lineWidth: number = 6, lineCap: string = "round", lineColour: string = "#F00") {
+    constructor(x: number, y: number, lineColour: string = "#000000", lineWidth: number = 10, lineStyle: string = "solid", iconWidth: number = 10, lineCap: string = "round") {
         super(x, y, iconWidth);
         this.type = "line";
         this.points = [];
@@ -17,10 +18,20 @@ class CanvasLine extends CanvasElement {
         this.lineWidth = lineWidth;
         this.lineCap = lineCap;
         this.lineColour = lineColour;
+        this.lineStyle = lineStyle;
         this.selected = false;
     }
 
     draw(ctx: CanvasRenderingContext2D) {
+        if(this.lineStyle === "solid"){
+            ctx.setLineDash([])
+        }
+        if(this.lineStyle === "dots"){
+            ctx.setLineDash([this.lineWidth * 2, this.lineWidth * 2]);
+        }
+        if(this.lineStyle === "dashed"){
+            ctx.setLineDash([this.lineWidth * 4, this.lineWidth * 2]);
+        }
         if(this.selected){
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth + 4;

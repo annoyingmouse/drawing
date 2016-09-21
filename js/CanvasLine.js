@@ -9,11 +9,12 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="CanvasElement.ts" />
 var CanvasLine = (function (_super) {
     __extends(CanvasLine, _super);
-    function CanvasLine(x, y, iconWidth, lineWidth, lineCap, lineColour) {
+    function CanvasLine(x, y, lineColour, lineWidth, lineStyle, iconWidth, lineCap) {
+        if (lineColour === void 0) { lineColour = "#000000"; }
+        if (lineWidth === void 0) { lineWidth = 10; }
+        if (lineStyle === void 0) { lineStyle = "solid"; }
         if (iconWidth === void 0) { iconWidth = 10; }
-        if (lineWidth === void 0) { lineWidth = 6; }
         if (lineCap === void 0) { lineCap = "round"; }
-        if (lineColour === void 0) { lineColour = "#F00"; }
         _super.call(this, x, y, iconWidth);
         this.type = "line";
         this.points = [];
@@ -21,9 +22,19 @@ var CanvasLine = (function (_super) {
         this.lineWidth = lineWidth;
         this.lineCap = lineCap;
         this.lineColour = lineColour;
+        this.lineStyle = lineStyle;
         this.selected = false;
     }
     CanvasLine.prototype.draw = function (ctx) {
+        if (this.lineStyle === "solid") {
+            ctx.setLineDash([]);
+        }
+        if (this.lineStyle === "dots") {
+            ctx.setLineDash([this.lineWidth * 2, this.lineWidth * 2]);
+        }
+        if (this.lineStyle === "dashed") {
+            ctx.setLineDash([this.lineWidth * 4, this.lineWidth * 2]);
+        }
         if (this.selected) {
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth + 4;

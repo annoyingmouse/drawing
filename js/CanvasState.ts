@@ -35,11 +35,16 @@ class CanvasState {
         this.dragY = 0;
         this.imageSrc = imageSrc;
 
-        this.canvas.addEventListener('selectstart', (e)=> {
+        this.canvas.addEventListener("drop", (e)=> {
+            e.preventDefault();
+            this.addImage(new CanvasImage(e.layerX - parseInt(e.dataTransfer.getData("x"), 10), e.layerY - parseInt(e.dataTransfer.getData("y"), 10), e.dataTransfer.getData("text")));
+        }, false);
+        this.canvas.addEventListener("dragover", (e)=> e.preventDefault(), false);
+        this.canvas.addEventListener("selectstart", (e)=> {
             e.preventDefault();
             return false;
         }, false);
-        this.canvas.addEventListener('mousedown', (e)=> {
+        this.canvas.addEventListener("mousedown", (e)=> {
             if (!e.button) {
                 var mx = e.layerX;
                 var my = e.layerY;
@@ -51,6 +56,9 @@ class CanvasState {
                             this.drawX = mx - this.elements[i].x;
                             this.dragY = my - this.elements[i].y;
                             this.dragging = true;
+                        }else if(this.elements[i].type === "line"){
+                            (<HTMLSelectElement>document.getElementById("colour")).value = this.elements[i].lineColour;
+                            (<HTMLInputElement>document.getElementById("width")).value = this.elements[i].lineWidth.toString();
                         }
                         this.selection = this.elements[i];
                         this.valid = false;
@@ -67,8 +75,15 @@ class CanvasState {
                 } else {
                     if (!this.drawing) {
                         this.drawing = true;
-                        this.element = new CanvasLine(e.layerX, e.layerY);
+                        this.element = new CanvasLine(
+                            e.layerX,
+                            e.layerY,
+                            (<HTMLSelectElement>document.getElementById("colour")).value,
+                            parseInt((<HTMLInputElement>document.getElementById("width")).value, 10),
+                            (<HTMLSelectElement>document.getElementById("style")).value
+                        );
                         this.elements.push(this.element);
+                        this.ctx.beginPath();
                         this.ctx.moveTo(e.layerX, e.layerY);
                     }
                 }
@@ -82,7 +97,20 @@ class CanvasState {
                 this.valid = false;
             } else {
                 if (this.drawing) {
+                    var lineWidth = parseInt((<HTMLInputElement>document.getElementById("width")).value, 10);
+                    var lineStyle = (<HTMLSelectElement>document.getElementById("style")).value;
                     this.element.points.push([e.layerX, e.layerY]);
+                    this.ctx.lineWidth = lineWidth;
+                    this.ctx.strokeStyle = (<HTMLSelectElement>document.getElementById("colour")).value;
+                    if(lineStyle === "solid"){
+                        this.ctx.setLineDash([])
+                    }
+                    if(lineStyle === "dots"){
+                        this.ctx.setLineDash([lineWidth * 2, lineWidth * 2]);
+                    }
+                    if(lineStyle === "dashed"){
+                        this.ctx.setLineDash([lineWidth * 4, lineWidth * 2]);
+                    }
                     this.ctx.lineTo(e.layerX, e.layerY);
                     this.ctx.stroke();
                 }
@@ -132,7 +160,6 @@ class CanvasState {
         } else {
             this.ctx.drawImage(img, 0, 0);
         }
-
     }
 
     addImage(image) {

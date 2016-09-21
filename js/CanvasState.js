@@ -20,11 +20,16 @@ var CanvasState = (function () {
         this.drawX = 0;
         this.dragY = 0;
         this.imageSrc = imageSrc;
-        this.canvas.addEventListener('selectstart', function (e) {
+        this.canvas.addEventListener("drop", function (e) {
+            e.preventDefault();
+            _this.addImage(new CanvasImage(e.layerX - parseInt(e.dataTransfer.getData("x"), 10), e.layerY - parseInt(e.dataTransfer.getData("y"), 10), e.dataTransfer.getData("text")));
+        }, false);
+        this.canvas.addEventListener("dragover", function (e) { return e.preventDefault(); }, false);
+        this.canvas.addEventListener("selectstart", function (e) {
             e.preventDefault();
             return false;
         }, false);
-        this.canvas.addEventListener('mousedown', function (e) {
+        this.canvas.addEventListener("mousedown", function (e) {
             if (!e.button) {
                 var mx = e.layerX;
                 var my = e.layerY;
@@ -36,6 +41,10 @@ var CanvasState = (function () {
                             _this.drawX = mx - _this.elements[i].x;
                             _this.dragY = my - _this.elements[i].y;
                             _this.dragging = true;
+                        }
+                        else if (_this.elements[i].type === "line") {
+                            document.getElementById("colour").value = _this.elements[i].lineColour;
+                            document.getElementById("width").value = _this.elements[i].lineWidth.toString();
                         }
                         _this.selection = _this.elements[i];
                         _this.valid = false;
@@ -54,8 +63,9 @@ var CanvasState = (function () {
                 else {
                     if (!_this.drawing) {
                         _this.drawing = true;
-                        _this.element = new CanvasLine(e.layerX, e.layerY);
+                        _this.element = new CanvasLine(e.layerX, e.layerY, document.getElementById("colour").value, parseInt(document.getElementById("width").value, 10), document.getElementById("style").value);
                         _this.elements.push(_this.element);
+                        _this.ctx.beginPath();
                         _this.ctx.moveTo(e.layerX, e.layerY);
                     }
                 }
@@ -70,7 +80,20 @@ var CanvasState = (function () {
             }
             else {
                 if (_this.drawing) {
+                    var lineWidth = parseInt(document.getElementById("width").value, 10);
+                    var lineStyle = document.getElementById("style").value;
                     _this.element.points.push([e.layerX, e.layerY]);
+                    _this.ctx.lineWidth = lineWidth;
+                    _this.ctx.strokeStyle = document.getElementById("colour").value;
+                    if (lineStyle === "solid") {
+                        _this.ctx.setLineDash([]);
+                    }
+                    if (lineStyle === "dots") {
+                        _this.ctx.setLineDash([lineWidth * 2, lineWidth * 2]);
+                    }
+                    if (lineStyle === "dashed") {
+                        _this.ctx.setLineDash([lineWidth * 4, lineWidth * 2]);
+                    }
                     _this.ctx.lineTo(e.layerX, e.layerY);
                     _this.ctx.stroke();
                 }
