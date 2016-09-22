@@ -17,31 +17,31 @@ class CanvasElement {
         this.iconWidth = iconWidth;
     }
 
-    draw(ctx: CanvasRenderingContext2D){
+    draw(ctx: CanvasRenderingContext2D) {
         console.log("Drawing the element");
     }
 
-    contains(mx: number, my: number, ctx?: CanvasRenderingContext2D){
+    contains(mx: number, my: number, ctx?: CanvasRenderingContext2D) {
         console.log("Check to see if mouse click is contained within element");
     }
 
-    containsDelete(mx: number, my: number){
+    containsDelete(mx: number, my: number) {
         console.log("Check to see if mouse click is contained within the element delete icon");
     }
 
-    setSelected(ctx: CanvasRenderingContext2D){
+    setSelected(ctx: CanvasRenderingContext2D) {
         console.log("Setting selected element");
     }
 
-    changeColour(state: CanvasState, colour: string){
+    changeColour(state: CanvasState, colour: string) {
         console.log("Change line colour");
     }
 
-    changeWidth(state: CanvasState, width: number){
+    changeWidth(state: CanvasState, width: number) {
         console.log("Change line width");
     }
 
-    changeStyle(state: CanvasState, style: string){
+    changeStyle(state: CanvasState, style: string) {
         console.log("Change line style");
     }
 }

@@ -19,7 +19,10 @@ var CanvasState = (function () {
         this.selection = null;
         this.drawX = 0;
         this.dragY = 0;
-        this.imageSrc = imageSrc;
+        this.background = document.createElement("img");
+        this.background.width = this.width;
+        this.background.height = this.height;
+        this.background.src = imageSrc;
         this.canvas.addEventListener("drop", function (e) {
             e.preventDefault();
             _this.addImage(new CanvasImage(e.layerX - parseInt(e.dataTransfer.getData("x"), 10), e.layerY - parseInt(e.dataTransfer.getData("y"), 10), e.dataTransfer.getData("text")));
@@ -33,8 +36,7 @@ var CanvasState = (function () {
             if (!e.button) {
                 var mx = e.layerX;
                 var my = e.layerY;
-                var l;
-                l = _this.elements.length;
+                var l = _this.elements.length;
                 for (var i = l - 1; i >= 0; i--) {
                     if (_this.elements[i].contains(mx, my)) {
                         if (_this.elements[i].type === "image") {
@@ -131,17 +133,13 @@ var CanvasState = (function () {
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillStyle = "#ddd";
         this.ctx.fillRect(0, 0, this.width, this.height);
-        var img = document.createElement("img");
-        img.width = this.width;
-        img.height = this.height;
-        img.src = this.imageSrc;
         if (firstRun) {
-            img.onload = function () {
-                _this.ctx.drawImage(img, 0, 0);
+            this.background.onload = function () {
+                _this.ctx.drawImage(_this.background, 0, 0);
             };
         }
         else {
-            this.ctx.drawImage(img, 0, 0);
+            this.ctx.drawImage(this.background, 0, 0);
         }
     };
     CanvasState.prototype.addImage = function (image) {
@@ -166,6 +164,19 @@ var CanvasState = (function () {
     CanvasState.prototype.handleStyleChange = function (style) {
         if (this.selection && this.selection.type === "line") {
             this.selection.changeStyle(this, style);
+        }
+    };
+    CanvasState.prototype.handleDelete = function () {
+        if (this.selection) {
+            var l = this.elements.length;
+            for (var i = l - 1; i >= 0; i--) {
+                if (this.elements[i] === this.selection) {
+                    this.elements.splice(i, 1);
+                    this.selection = null;
+                    this.setInvalid();
+                    break;
+                }
+            }
         }
     };
     return CanvasState;

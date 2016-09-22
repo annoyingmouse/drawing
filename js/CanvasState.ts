@@ -17,8 +17,8 @@ class CanvasState {
     element: CanvasElement;
     drawX: number;
     dragY: number;
-    imageSrc: string;
     drawing: boolean;
+    background: HTMLImageElement;
 
     constructor(canvas: HTMLCanvasElement, imageSrc: string = "img/grass.jpg") {
         this.canvas = canvas;
@@ -33,7 +33,10 @@ class CanvasState {
         this.selection = null;
         this.drawX = 0;
         this.dragY = 0;
-        this.imageSrc = imageSrc;
+        this.background = document.createElement("img");
+        this.background.width = this.width;
+        this.background.height = this.height;
+        this.background.src = imageSrc;
 
         this.canvas.addEventListener("drop", (e)=> {
             e.preventDefault();
@@ -48,8 +51,7 @@ class CanvasState {
             if (!e.button) {
                 var mx = e.layerX;
                 var my = e.layerY;
-                var l: number;
-                l = this.elements.length;
+                var l: number = this.elements.length;
                 for (var i = l - 1; i >= 0; i--) {
                     if (this.elements[i].contains(mx, my)) {
                         if (this.elements[i].type === "image") {
@@ -149,16 +151,12 @@ class CanvasState {
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.fillStyle = "#ddd";
         this.ctx.fillRect(0, 0, this.width, this.height);
-        var img: HTMLImageElement = document.createElement("img");
-        img.width = this.width;
-        img.height = this.height;
-        img.src = this.imageSrc;
         if (firstRun) {
-            img.onload = ()=> {
-                this.ctx.drawImage(img, 0, 0);
+            this.background.onload = ()=> {
+                this.ctx.drawImage(this.background, 0, 0);
             };
         } else {
-            this.ctx.drawImage(img, 0, 0);
+            this.ctx.drawImage(this.background, 0, 0);
         }
     }
 
@@ -168,7 +166,7 @@ class CanvasState {
         this.valid = false;
     }
 
-    setInvalid(){
+    setInvalid() {
         this.valid = false;
         this.draw();
     }
@@ -188,6 +186,20 @@ class CanvasState {
     handleStyleChange(style: string) {
         if (this.selection && this.selection.type === "line") {
             this.selection.changeStyle(this, style);
+        }
+    }
+
+    handleDelete() {
+        if (this.selection) {
+            var l: number = this.elements.length;
+            for (var i = l - 1; i >= 0; i--) {
+                if (this.elements[i] === this.selection) {
+                    this.elements.splice(i, 1);
+                    this.selection = null;
+                    this.setInvalid();
+                    break;
+                }
+            }
         }
     }
 }

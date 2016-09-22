@@ -21,4 +21,10 @@
     document.getElementById("style").addEventListener("change", function (e) {
         canvas.handleStyleChange(e.target.value);
     }, false);
+    document.addEventListener("keydown", function (e) {
+        var key = e.keyCode || e.charCode;
+        if (key === 46) {
+            canvas.handleDelete();
+        }
+    }, false);
 })();
