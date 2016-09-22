@@ -168,4 +168,9 @@ class CanvasState {
         this.valid = false;
     }
 
+    handleColourChange(colour: string){
+        if(this.selection && this.selection.type === "line"){
+            this.selection.changeColour(this.ctx, colour);
+        }
+    }
 }

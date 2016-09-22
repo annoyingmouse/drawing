@@ -116,6 +116,10 @@ var CanvasLine = (function (_super) {
         };
         img.src = url;
     };
+    CanvasLine.prototype.changeColour = function (ctx, colour) {
+        this.lineColour = colour;
+        this.draw(ctx);
+    };
     return CanvasLine;
 }(CanvasElement));
 /*

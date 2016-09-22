@@ -2,26 +2,17 @@
  * Created by Dominic on 21/09/2016.
  */
 /// <reference path="CanvasState.ts" />
-function drag(ev) {
-    ev.dataTransfer.setData("text", ev.target.id);
-    ev.dataTransfer.setData("x", ev.layerX);
-    ev.dataTransfer.setData("y", ev.layerY);
-}
 (function () {
-    var s = new CanvasState(document.getElementById('canvas'), "img/pitch.jpg");
-    // let images : NodeListOf<Element> = document.querySelectorAll(".moveable");
-    //
-    // //var elementList = document.querySelectorAll(".moveable");
-    // console.log(images);
-    // for(let i in images){
-    //     if(typeof images[i] === "object"){
-    //         images[i].addEventListener("dragstart", (e)=>{
-    //             console.log((e as DragEvent));
-    //             // (e as DragEvent).dataTransfer.setData("text", (e as DragEvent).target.id);
-    //             // (e as DragEvent).dataTransfer.setData("x", e.layerX);
-    //             // (e as DragEvent).dataTransfer.setData("y", e.layerY);
-    //
-    //         });
-    //     }
-    // }
+    var canvas = new CanvasState(document.getElementById('canvas'), "img/pitch.jpg");
+    var images = document.querySelectorAll(".moveable");
+    for (var i = 0; i < images.length; i++) {
+        images[i].addEventListener("dragstart", function (e) {
+            e.dataTransfer.setData("text", e.target.id);
+            e.dataTransfer.setData("x", e.layerX.toString());
+            e.dataTransfer.setData("y", e.layerY.toString());
+        }, false);
+    }
+    document.getElementById("colour").addEventListener("change", function (e) {
+        canvas.handleColourChange(e.target.value);
+    }, false);
 })();

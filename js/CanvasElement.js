@@ -20,6 +20,9 @@ var CanvasElement = (function () {
     CanvasElement.prototype.setSelected = function (ctx) {
         console.log("Setting selected element");
     };
+    CanvasElement.prototype.changeColour = function (ctx, colour) {
+        console.log("Change line colour");
+    };
     return CanvasElement;
 }());
 function containedWithin(obj, x, y) {

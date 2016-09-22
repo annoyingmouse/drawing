@@ -127,7 +127,10 @@ class CanvasLine extends CanvasElement {
         };
         img.src = url;
     }
-
+    changeColour(ctx: CanvasRenderingContext2D, colour: string){
+        this.lineColour = colour;
+        this.draw(ctx);
+    }
 }
 /*
  * http://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color

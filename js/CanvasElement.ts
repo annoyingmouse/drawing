@@ -32,6 +32,10 @@ class CanvasElement {
     setSelected(ctx: CanvasRenderingContext2D){
         console.log("Setting selected element");
     }
+
+    changeColour(ctx: CanvasRenderingContext2D, colour: string){
+        console.log("Change line colour");
+    }
 }
 function containedWithin(obj: BoundingBox, x: number, y: number) {
     return (obj.horizontal.left <= x)

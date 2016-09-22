@@ -149,5 +149,10 @@ var CanvasState = (function () {
         this.selection = null;
         this.valid = false;
     };
+    CanvasState.prototype.handleColourChange = function (colour) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeColour(this.ctx, colour);
+        }
+    };
     return CanvasState;
 }());
