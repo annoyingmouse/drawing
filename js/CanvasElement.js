@@ -20,8 +20,14 @@ var CanvasElement = (function () {
     CanvasElement.prototype.setSelected = function (ctx) {
         console.log("Setting selected element");
     };
-    CanvasElement.prototype.changeColour = function (ctx, colour) {
+    CanvasElement.prototype.changeColour = function (state, colour) {
         console.log("Change line colour");
+    };
+    CanvasElement.prototype.changeWidth = function (state, width) {
+        console.log("Change line width");
+    };
+    CanvasElement.prototype.changeStyle = function (state, style) {
+        console.log("Change line style");
     };
     return CanvasElement;
 }());

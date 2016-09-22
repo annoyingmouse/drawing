@@ -1,0 +1,2 @@
+# Don't commit compiled JS files (we're using typescript to generate the JS anyway)
+*.js

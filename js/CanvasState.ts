@@ -56,7 +56,7 @@ class CanvasState {
                             this.drawX = mx - this.elements[i].x;
                             this.dragY = my - this.elements[i].y;
                             this.dragging = true;
-                        }else if(this.elements[i].type === "line"){
+                        } else if (this.elements[i].type === "line") {
                             (<HTMLSelectElement>document.getElementById("colour")).value = this.elements[i].lineColour;
                             (<HTMLInputElement>document.getElementById("width")).value = this.elements[i].lineWidth.toString();
                         }
@@ -102,13 +102,13 @@ class CanvasState {
                     this.element.points.push([e.layerX, e.layerY]);
                     this.ctx.lineWidth = lineWidth;
                     this.ctx.strokeStyle = (<HTMLSelectElement>document.getElementById("colour")).value;
-                    if(lineStyle === "solid"){
+                    if (lineStyle === "solid") {
                         this.ctx.setLineDash([])
                     }
-                    if(lineStyle === "dots"){
+                    if (lineStyle === "dots") {
                         this.ctx.setLineDash([lineWidth * 2, lineWidth * 2]);
                     }
-                    if(lineStyle === "dashed"){
+                    if (lineStyle === "dashed") {
                         this.ctx.setLineDash([lineWidth * 4, lineWidth * 2]);
                     }
                     this.ctx.lineTo(e.layerX, e.layerY);
@@ -168,9 +168,26 @@ class CanvasState {
         this.valid = false;
     }
 
-    handleColourChange(colour: string){
-        if(this.selection && this.selection.type === "line"){
-            this.selection.changeColour(this.ctx, colour);
+    setInvalid(){
+        this.valid = false;
+        this.draw();
+    }
+
+    handleColourChange(colour: string) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeColour(this, colour);
+        }
+    }
+
+    handleWidthChange(width: number) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeWidth(this, width);
+        }
+    }
+
+    handleStyleChange(style: string) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeStyle(this, style);
         }
     }
 }

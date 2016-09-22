@@ -15,4 +15,10 @@
     document.getElementById("colour").addEventListener("change", (e)=> {
         canvas.handleColourChange((<HTMLSelectElement>e.target).value);
     }, false);
+    document.getElementById("width").addEventListener("change", (e)=> {
+        canvas.handleWidthChange(parseInt((<HTMLSelectElement>e.target).value, 10));
+    }, false);
+    document.getElementById("style").addEventListener("change", (e)=> {
+        canvas.handleStyleChange((<HTMLSelectElement>e.target).value);
+    }, false);
 })();

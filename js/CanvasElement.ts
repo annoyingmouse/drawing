@@ -33,8 +33,16 @@ class CanvasElement {
         console.log("Setting selected element");
     }
 
-    changeColour(ctx: CanvasRenderingContext2D, colour: string){
+    changeColour(state: CanvasState, colour: string){
         console.log("Change line colour");
+    }
+
+    changeWidth(state: CanvasState, width: number){
+        console.log("Change line width");
+    }
+
+    changeStyle(state: CanvasState, style: string){
+        console.log("Change line style");
     }
 }
 function containedWithin(obj: BoundingBox, x: number, y: number) {

@@ -23,16 +23,16 @@ class CanvasLine extends CanvasElement {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if(this.lineStyle === "solid"){
+        if (this.lineStyle === "solid") {
             ctx.setLineDash([])
         }
-        if(this.lineStyle === "dots"){
+        if (this.lineStyle === "dots") {
             ctx.setLineDash([this.lineWidth * 2, this.lineWidth * 2]);
         }
-        if(this.lineStyle === "dashed"){
+        if (this.lineStyle === "dashed") {
             ctx.setLineDash([this.lineWidth * 4, this.lineWidth * 2]);
         }
-        if(this.selected){
+        if (this.selected) {
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth + 4;
             ctx.lineCap = this.lineCap;
@@ -58,7 +58,7 @@ class CanvasLine extends CanvasElement {
         this.selected = false;
     }
 
-    contains(mx:number, my:number, ctx: CanvasRenderingContext2D) {
+    contains(mx: number, my: number, ctx: CanvasRenderingContext2D) {
         var l: number = this.points.length;
         var x1: number = this.x;
         var y1: number = this.y;
@@ -101,7 +101,7 @@ class CanvasLine extends CanvasElement {
         return containedWithin(new BoundingBox(this.x, this.x + this.iconWidth, this.y - this.iconWidth, this.y), mx, my);
     }
 
-    setSelected(ctx: CanvasRenderingContext2D){
+    setSelected(ctx: CanvasRenderingContext2D) {
         this.selected = true;
         this.draw(ctx);
         var lineStyle: string = `
@@ -127,16 +127,27 @@ class CanvasLine extends CanvasElement {
         };
         img.src = url;
     }
-    changeColour(ctx: CanvasRenderingContext2D, colour: string){
+
+    changeColour(state: CanvasState, colour: string) {
         this.lineColour = colour;
-        this.draw(ctx);
+        state.setInvalid();
+    }
+
+    changeWidth(state: CanvasState, width: number) {
+        this.lineWidth = width;
+        state.setInvalid();
+    }
+
+    changeStyle(state: CanvasState, style: string) {
+        this.lineStyle = style;
+        state.setInvalid();
     }
 }
 /*
  * http://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
  */
-function invertColor(hex:string, bw:boolean) {
-    var rI:number, gI:number, bI:number,r:string,g:string,b:string;
+function invertColor(hex: string, bw: boolean) {
+    var rI: number, gI: number, bI: number, r: string, g: string, b: string;
     if (hex.indexOf("#") === 0) {
         hex = hex.slice(1);
     }
@@ -163,7 +174,7 @@ function invertColor(hex:string, bw:boolean) {
     // pad each with zeros and return
     return "#" + padZero(r) + padZero(g) + padZero(b);
 }
-function padZero(str:string, len: number = 2) {
+function padZero(str: string, len: number = 2) {
     var zeros = new Array(len).join('0');
     return (zeros + str).slice(-len);
 }
@@ -172,11 +183,11 @@ function padZero(str:string, len: number = 2) {
  * https://gist.github.com/THEtheChad/1297590
  */
 function parseColor(color) {
-    var cache, color = color.replace(/\s\s*/g,'');
-    if (cache = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(color)){
+    var cache, color = color.replace(/\s\s*/g, '');
+    if (cache = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(color)) {
         cache = [parseInt(cache[1], 16), parseInt(cache[2], 16), parseInt(cache[3], 16)];
     }
-    else if (cache = /^#([\da-fA-F])([\da-fA-F])([\da-fA-F])/.exec(color)){
+    else if (cache = /^#([\da-fA-F])([\da-fA-F])([\da-fA-F])/.exec(color)) {
         cache = [parseInt(cache[1], 16) * 17, parseInt(cache[2], 16) * 17, parseInt(cache[3], 16) * 17];
     }
     return cache.slice(0, 3);

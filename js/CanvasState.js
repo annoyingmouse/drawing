@@ -149,9 +149,23 @@ var CanvasState = (function () {
         this.selection = null;
         this.valid = false;
     };
+    CanvasState.prototype.setInvalid = function () {
+        this.valid = false;
+        this.draw();
+    };
     CanvasState.prototype.handleColourChange = function (colour) {
         if (this.selection && this.selection.type === "line") {
-            this.selection.changeColour(this.ctx, colour);
+            this.selection.changeColour(this, colour);
+        }
+    };
+    CanvasState.prototype.handleWidthChange = function (width) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeWidth(this, width);
+        }
+    };
+    CanvasState.prototype.handleStyleChange = function (style) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeStyle(this, style);
         }
     };
     return CanvasState;

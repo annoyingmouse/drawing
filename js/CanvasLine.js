@@ -116,9 +116,17 @@ var CanvasLine = (function (_super) {
         };
         img.src = url;
     };
-    CanvasLine.prototype.changeColour = function (ctx, colour) {
+    CanvasLine.prototype.changeColour = function (state, colour) {
         this.lineColour = colour;
-        this.draw(ctx);
+        state.setInvalid();
+    };
+    CanvasLine.prototype.changeWidth = function (state, width) {
+        this.lineWidth = width;
+        state.setInvalid();
+    };
+    CanvasLine.prototype.changeStyle = function (state, style) {
+        this.lineStyle = style;
+        state.setInvalid();
     };
     return CanvasLine;
 }(CanvasElement));
