@@ -65,7 +65,7 @@ var CanvasState = (function () {
                 else {
                     if (!_this.drawing) {
                         _this.drawing = true;
-                        _this.element = new CanvasLine(e.layerX, e.layerY, document.getElementById("colour").value, parseInt(document.getElementById("width").value, 10), document.getElementById("style").value);
+                        _this.element = new CanvasLine(e.layerX, e.layerY, document.getElementById("colour").value, parseInt(document.getElementById("width").value, 10), document.getElementById("style").value, document.getElementById("arrow").value);
                         var lineWidth = parseInt(document.getElementById("width").value, 10);
                         _this.ctx.lineWidth = lineWidth;
                         _this.ctx.strokeStyle = document.getElementById("colour").value;

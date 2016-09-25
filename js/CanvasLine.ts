@@ -9,12 +9,11 @@ class CanvasLine extends CanvasElement {
     lineColour: string;
     selected: boolean;
     lineStyle: string;
-    // startAverage: number[];
-    // endAverage: number[];
     startRadians: number;
     endRadians: number;
+    arrow: string;
 
-    constructor(x: number, y: number, lineColour: string = "#000000", lineWidth: number = 10, lineStyle: string = "solid", iconWidth: number = 10, lineCap: string = "round") {
+    constructor(x: number, y: number, lineColour: string = "#000000", lineWidth: number = 10, lineStyle: string = "solid", arrow: string = "none", iconWidth: number = 10, lineCap: string = "round") {
         super(x, y, iconWidth);
         this.type = "line";
         this.points = [];
@@ -23,6 +22,7 @@ class CanvasLine extends CanvasElement {
         this.lineCap = lineCap;
         this.lineColour = lineColour;
         this.lineStyle = lineStyle;
+        this.arrow = arrow;
         this.selected = false;
     }
 
@@ -85,9 +85,14 @@ class CanvasLine extends CanvasElement {
         }
         ctx.stroke();
         this.selected = false;
-        console.log(this);
-        this.drawArrowhead(ctx, this.x, this.y, this.startRadians);
-        this.drawArrowhead(ctx, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.endRadians);
+        if (this.arrow !== "none") {
+            if (this.arrow === "both" || this.arrow === "start") {
+                this.drawArrowhead(ctx, this.x, this.y, this.startRadians);
+            }
+            if (this.arrow === "both" || this.arrow === "end") {
+                this.drawArrowhead(ctx, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.endRadians);
+            }
+        }
     }
 
     contains(mx: number, my: number, ctx: CanvasRenderingContext2D) {
@@ -173,8 +178,8 @@ class CanvasLine extends CanvasElement {
     }
 
     changeArrow(state: CanvasState, arrow: string) {
-        console.log(arrow);
-        console.log(this.points);
+        this.arrow = arrow;
+        state.setInvalid();
     }
 }
 /*

@@ -9,10 +9,11 @@ var __extends = (this && this.__extends) || function (d, b) {
 /// <reference path="CanvasElement.ts" />
 var CanvasLine = (function (_super) {
     __extends(CanvasLine, _super);
-    function CanvasLine(x, y, lineColour, lineWidth, lineStyle, iconWidth, lineCap) {
+    function CanvasLine(x, y, lineColour, lineWidth, lineStyle, arrow, iconWidth, lineCap) {
         if (lineColour === void 0) { lineColour = "#000000"; }
         if (lineWidth === void 0) { lineWidth = 10; }
         if (lineStyle === void 0) { lineStyle = "solid"; }
+        if (arrow === void 0) { arrow = "none"; }
         if (iconWidth === void 0) { iconWidth = 10; }
         if (lineCap === void 0) { lineCap = "round"; }
         _super.call(this, x, y, iconWidth);
@@ -23,6 +24,7 @@ var CanvasLine = (function (_super) {
         this.lineCap = lineCap;
         this.lineColour = lineColour;
         this.lineStyle = lineStyle;
+        this.arrow = arrow;
         this.selected = false;
     }
     CanvasLine.prototype.drawArrowhead = function (ctx, x, y, radians) {
@@ -82,9 +84,14 @@ var CanvasLine = (function (_super) {
         }
         ctx.stroke();
         this.selected = false;
-        console.log(this);
-        this.drawArrowhead(ctx, this.x, this.y, this.startRadians);
-        this.drawArrowhead(ctx, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.endRadians);
+        if (this.arrow !== "none") {
+            if (this.arrow === "both" || this.arrow === "start") {
+                this.drawArrowhead(ctx, this.x, this.y, this.startRadians);
+            }
+            if (this.arrow === "both" || this.arrow === "end") {
+                this.drawArrowhead(ctx, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.endRadians);
+            }
+        }
     };
     CanvasLine.prototype.contains = function (mx, my, ctx) {
         var l = this.points.length;
@@ -152,8 +159,8 @@ var CanvasLine = (function (_super) {
         state.setInvalid();
     };
     CanvasLine.prototype.changeArrow = function (state, arrow) {
-        console.log(arrow);
-        console.log(this.points);
+        this.arrow = arrow;
+        state.setInvalid();
     };
     return CanvasLine;
 }(CanvasElement));

@@ -82,9 +82,9 @@ class CanvasState {
                             e.layerY,
                             (<HTMLSelectElement>document.getElementById("colour")).value,
                             parseInt((<HTMLInputElement>document.getElementById("width")).value, 10),
-                            (<HTMLSelectElement>document.getElementById("style")).value
+                            (<HTMLSelectElement>document.getElementById("style")).value,
+                            (<HTMLSelectElement>document.getElementById("arrow")).value
                         );
-
                         var lineWidth = parseInt((<HTMLInputElement>document.getElementById("width")).value, 10);
                         this.ctx.lineWidth = lineWidth;
                         this.ctx.strokeStyle = (<HTMLSelectElement>document.getElementById("colour")).value;
