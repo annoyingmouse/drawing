@@ -73,7 +73,7 @@ class CanvasState {
                 }
                 if (this.selection) {
                     this.selection = null;
-                    this.valid = false; // Need to clear the old selection border
+                    this.valid = false;
                 } else {
                     if (!this.drawing) {
                         this.drawing = true;
@@ -84,7 +84,11 @@ class CanvasState {
                             parseInt((<HTMLInputElement>document.getElementById("width")).value, 10),
                             (<HTMLSelectElement>document.getElementById("style")).value
                         );
-                        this.elements.push(this.element);
+
+                        var lineWidth = parseInt((<HTMLInputElement>document.getElementById("width")).value, 10);
+                        this.ctx.lineWidth = lineWidth;
+                        this.ctx.strokeStyle = (<HTMLSelectElement>document.getElementById("colour")).value;
+                        this.ctx.setLineDash(getLineDash((<HTMLSelectElement>document.getElementById("style")).value, lineWidth));
                         this.ctx.beginPath();
                         this.ctx.moveTo(e.layerX, e.layerY);
                     }
@@ -99,29 +103,19 @@ class CanvasState {
                 this.valid = false;
             } else {
                 if (this.drawing) {
-                    var lineWidth = parseInt((<HTMLInputElement>document.getElementById("width")).value, 10);
-                    var lineStyle = (<HTMLSelectElement>document.getElementById("style")).value;
                     this.element.points.push([e.layerX, e.layerY]);
-                    this.ctx.lineWidth = lineWidth;
-                    this.ctx.strokeStyle = (<HTMLSelectElement>document.getElementById("colour")).value;
-                    if (lineStyle === "solid") {
-                        this.ctx.setLineDash([])
-                    }
-                    if (lineStyle === "dots") {
-                        this.ctx.setLineDash([lineWidth * 2, lineWidth * 2]);
-                    }
-                    if (lineStyle === "dashed") {
-                        this.ctx.setLineDash([lineWidth * 4, lineWidth * 2]);
-                    }
                     this.ctx.lineTo(e.layerX, e.layerY);
                     this.ctx.stroke();
                 }
             }
             this.draw();
         }, true);
-        this.canvas.addEventListener('mouseup', (e)=> {
+        this.canvas.addEventListener('mouseup', ()=> {
             this.dragging = false;
             if (this.drawing) {
+                if(this.element.points.length > 1){
+                    this.elements.push(this.element);
+                }
                 this.drawing = false;
                 this.valid = false;
             }
@@ -189,6 +183,12 @@ class CanvasState {
         }
     }
 
+    handleArrowChange(arrow: string) {
+        if (this.selection && this.selection.type === "line") {
+            this.selection.changeArrow(this, arrow);
+        }
+    }
+
     handleDelete() {
         if (this.selection) {
             var l: number = this.elements.length;
@@ -202,4 +202,19 @@ class CanvasState {
             }
         }
     }
+}
+
+function getLineDash(type: string, width: number) : number[] {
+    var lineTypes = {
+        "solid": function(){
+            return [0, 0];
+        },
+        "dots": function(){
+            return [width * 2, width * 2];
+        },
+        "dashed": function(){
+            return [width * 4, width * 2];
+        }
+    };
+    return (lineTypes[type] || lineTypes["solid"])();
 }

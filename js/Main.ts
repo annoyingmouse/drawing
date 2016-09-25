@@ -21,6 +21,9 @@
     document.getElementById("style").addEventListener("change", (e)=> {
         canvas.handleStyleChange((<HTMLSelectElement>e.target).value);
     }, false);
+    document.getElementById("arrow").addEventListener("change", (e)=> {
+        canvas.handleArrowChange((<HTMLSelectElement>e.target).value);
+    }, false);
     document.addEventListener("keydown", (e)=> {
         var key = e.keyCode || e.charCode;
         if (key === 46) {

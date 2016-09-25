@@ -9,6 +9,10 @@ class CanvasLine extends CanvasElement {
     lineColour: string;
     selected: boolean;
     lineStyle: string;
+    // startAverage: number[];
+    // endAverage: number[];
+    startRadians: number;
+    endRadians: number;
 
     constructor(x: number, y: number, lineColour: string = "#000000", lineWidth: number = 10, lineStyle: string = "solid", iconWidth: number = 10, lineCap: string = "round") {
         super(x, y, iconWidth);
@@ -22,16 +26,41 @@ class CanvasLine extends CanvasElement {
         this.selected = false;
     }
 
+    drawArrowhead(ctx: CanvasRenderingContext2D, x: number, y: number, radians: number) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.translate(x, y);
+        ctx.rotate(radians);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(15, 40);
+        ctx.lineTo(-15, 40);
+        ctx.closePath();
+        ctx.restore();
+        ctx.fillStyle = this.lineColour;
+        ctx.setLineDash(getLineDash("solid", this.lineWidth));
+        ctx.stroke();
+        ctx.fill();
+    }
+
+    static calculateRadions(points: number[][], x: number, y: number, start: boolean, smoothing: number): number {
+        let limit = (Math.floor(points.length / 3) >= smoothing) ? smoothing : Math.floor(points.length / 3);
+        let averageArray: number[][] = (start) ? [[x, y]] : [];
+        for (let i = (start) ? 0 : points.length - limit; i < ((start) ? limit - 1 : points.length); i++) {
+            averageArray.push(points[i]);
+        }
+        let average: number[] = [averageArray.reduce((p, c)=>p + c[0], 0) / limit];
+        average.push(averageArray.reduce((p, c)=>p + c[1], 0) / limit);
+        let radians = Math.atan((average[1] - y) / (average[0] - x));
+        radians += ((average[0] > x) ? -90 : 90) * Math.PI / 180;
+        return radians;
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
-        if (this.lineStyle === "solid") {
-            ctx.setLineDash([])
+        if (typeof this.startRadians === "undefined") {
+            this.startRadians = CanvasLine.calculateRadions(this.points, this.x, this.y, true, 15);
+            this.endRadians = CanvasLine.calculateRadions(this.points, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], false, 15)
         }
-        if (this.lineStyle === "dots") {
-            ctx.setLineDash([this.lineWidth * 2, this.lineWidth * 2]);
-        }
-        if (this.lineStyle === "dashed") {
-            ctx.setLineDash([this.lineWidth * 4, this.lineWidth * 2]);
-        }
+        ctx.setLineDash(getLineDash(this.lineStyle, this.lineWidth));
         if (this.selected) {
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth + 4;
@@ -56,16 +85,17 @@ class CanvasLine extends CanvasElement {
         }
         ctx.stroke();
         this.selected = false;
+        console.log(this);
+        this.drawArrowhead(ctx, this.x, this.y, this.startRadians);
+        this.drawArrowhead(ctx, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.endRadians);
     }
 
     contains(mx: number, my: number, ctx: CanvasRenderingContext2D) {
         var l: number = this.points.length;
         var x1: number = this.x;
         var y1: number = this.y;
-        var wd: number = this.lineWidth;
-        var x2: number, y2: number, coordinatesArray = [];
+        var x2: number, y2: number;
         for (var i: number = 0; i < l; i++) {
-            var point = this.points[i];
             x2 = this.points[i][0];
             y2 = this.points[i][1];
             var dx = Math.abs(x2 - x1);
@@ -86,7 +116,6 @@ class CanvasLine extends CanvasElement {
                     err += dx;
                     y1 += sy;
                 }
-                var d = Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2));
                 if (Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2)) < this.lineWidth / 2) {
                     return true;
                 }
@@ -142,12 +171,17 @@ class CanvasLine extends CanvasElement {
         this.lineStyle = style;
         state.setInvalid();
     }
+
+    changeArrow(state: CanvasState, arrow: string) {
+        console.log(arrow);
+        console.log(this.points);
+    }
 }
 /*
  * http://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
  */
 function invertColor(hex: string, bw: boolean) {
-    var rI: number, gI: number, bI: number, r: string, g: string, b: string;
+    var r: string, g: string, b: string;
     if (hex.indexOf("#") === 0) {
         hex = hex.slice(1);
     }
@@ -177,18 +211,4 @@ function invertColor(hex: string, bw: boolean) {
 function padZero(str: string, len: number = 2) {
     var zeros = new Array(len).join('0');
     return (zeros + str).slice(-len);
-}
-
-/*
- * https://gist.github.com/THEtheChad/1297590
- */
-function parseColor(color) {
-    var cache, color = color.replace(/\s\s*/g, '');
-    if (cache = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(color)) {
-        cache = [parseInt(cache[1], 16), parseInt(cache[2], 16), parseInt(cache[3], 16)];
-    }
-    else if (cache = /^#([\da-fA-F])([\da-fA-F])([\da-fA-F])/.exec(color)) {
-        cache = [parseInt(cache[1], 16) * 17, parseInt(cache[2], 16) * 17, parseInt(cache[3], 16) * 17];
-    }
-    return cache.slice(0, 3);
 }

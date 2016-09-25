@@ -29,6 +29,9 @@ var CanvasElement = (function () {
     CanvasElement.prototype.changeStyle = function (state, style) {
         console.log("Change line style");
     };
+    CanvasElement.prototype.changeArrow = function (state, style) {
+        console.log("Change arrow style");
+    };
     return CanvasElement;
 }());
 function containedWithin(obj, x, y) {

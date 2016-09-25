@@ -25,16 +25,39 @@ var CanvasLine = (function (_super) {
         this.lineStyle = lineStyle;
         this.selected = false;
     }
+    CanvasLine.prototype.drawArrowhead = function (ctx, x, y, radians) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.translate(x, y);
+        ctx.rotate(radians);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(15, 40);
+        ctx.lineTo(-15, 40);
+        ctx.closePath();
+        ctx.restore();
+        ctx.fillStyle = this.lineColour;
+        ctx.setLineDash(getLineDash("solid", this.lineWidth));
+        ctx.stroke();
+        ctx.fill();
+    };
+    CanvasLine.calculateRadions = function (points, x, y, start, smoothing) {
+        var limit = (Math.floor(points.length / 3) >= smoothing) ? smoothing : Math.floor(points.length / 3);
+        var averageArray = (start) ? [[x, y]] : [];
+        for (var i = (start) ? 0 : points.length - limit; i < ((start) ? limit - 1 : points.length); i++) {
+            averageArray.push(points[i]);
+        }
+        var average = [averageArray.reduce(function (p, c) { return p + c[0]; }, 0) / limit];
+        average.push(averageArray.reduce(function (p, c) { return p + c[1]; }, 0) / limit);
+        var radians = Math.atan((average[1] - y) / (average[0] - x));
+        radians += ((average[0] > x) ? -90 : 90) * Math.PI / 180;
+        return radians;
+    };
     CanvasLine.prototype.draw = function (ctx) {
-        if (this.lineStyle === "solid") {
-            ctx.setLineDash([]);
+        if (typeof this.startRadians === "undefined") {
+            this.startRadians = CanvasLine.calculateRadions(this.points, this.x, this.y, true, 15);
+            this.endRadians = CanvasLine.calculateRadions(this.points, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], false, 15);
         }
-        if (this.lineStyle === "dots") {
-            ctx.setLineDash([this.lineWidth * 2, this.lineWidth * 2]);
-        }
-        if (this.lineStyle === "dashed") {
-            ctx.setLineDash([this.lineWidth * 4, this.lineWidth * 2]);
-        }
+        ctx.setLineDash(getLineDash(this.lineStyle, this.lineWidth));
         if (this.selected) {
             ctx.beginPath();
             ctx.lineWidth = this.lineWidth + 4;
@@ -59,15 +82,16 @@ var CanvasLine = (function (_super) {
         }
         ctx.stroke();
         this.selected = false;
+        console.log(this);
+        this.drawArrowhead(ctx, this.x, this.y, this.startRadians);
+        this.drawArrowhead(ctx, this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.endRadians);
     };
     CanvasLine.prototype.contains = function (mx, my, ctx) {
         var l = this.points.length;
         var x1 = this.x;
         var y1 = this.y;
-        var wd = this.lineWidth;
-        var x2, y2, coordinatesArray = [];
+        var x2, y2;
         for (var i = 0; i < l; i++) {
-            var point = this.points[i];
             x2 = this.points[i][0];
             y2 = this.points[i][1];
             var dx = Math.abs(x2 - x1);
@@ -88,7 +112,6 @@ var CanvasLine = (function (_super) {
                     err += dx;
                     y1 += sy;
                 }
-                var d = Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2));
                 if (Math.sqrt(Math.pow((mx - x1), 2) + Math.pow((my - y1), 2)) < this.lineWidth / 2) {
                     return true;
                 }
@@ -128,13 +151,17 @@ var CanvasLine = (function (_super) {
         this.lineStyle = style;
         state.setInvalid();
     };
+    CanvasLine.prototype.changeArrow = function (state, arrow) {
+        console.log(arrow);
+        console.log(this.points);
+    };
     return CanvasLine;
 }(CanvasElement));
 /*
  * http://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
  */
 function invertColor(hex, bw) {
-    var rI, gI, bI, r, g, b;
+    var r, g, b;
     if (hex.indexOf("#") === 0) {
         hex = hex.slice(1);
     }
@@ -163,17 +190,4 @@ function padZero(str, len) {
     if (len === void 0) { len = 2; }
     var zeros = new Array(len).join('0');
     return (zeros + str).slice(-len);
-}
-/*
- * https://gist.github.com/THEtheChad/1297590
- */
-function parseColor(color) {
-    var cache, color = color.replace(/\s\s*/g, '');
-    if (cache = /^#([\da-fA-F]{2})([\da-fA-F]{2})([\da-fA-F]{2})/.exec(color)) {
-        cache = [parseInt(cache[1], 16), parseInt(cache[2], 16), parseInt(cache[3], 16)];
-    }
-    else if (cache = /^#([\da-fA-F])([\da-fA-F])([\da-fA-F])/.exec(color)) {
-        cache = [parseInt(cache[1], 16) * 17, parseInt(cache[2], 16) * 17, parseInt(cache[3], 16) * 17];
-    }
-    return cache.slice(0, 3);
 }

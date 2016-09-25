@@ -4,40 +4,7 @@
         <meta charset="UTF-8">
         <title>Drawing Test</title>
         <link href="../bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"/>
-        <style>
-            #canvasHolder{
-                position: absolute;
-                width: 1140px;
-                height: 700px;
-                background-color: #f5f5f5;
-            }
-            #canvas{
-                position: relative;
-                left: 50px;
-                top: 50px;
-                width: 1040px;
-                height: 600px;
-            }
-            .moveable{
-                position: absolute;
-                cursor: pointer;
-            }
-            body {
-                padding-top: 60px;
-            }
-            #colour *.red{
-                background-color: #ff0000;
-                color: #00ffff;
-            }
-            #colour *.green{
-                background-color: #00ff00;
-                color: #ff00ff;
-            }
-            #colour *.blue{
-                background-color: #0000ff;
-                color: #ffff00;
-            }
-        </style>
+        <link href="css/site.css" rel="stylesheet"/>
     </head>
     <body>
         <div class="navbar navbar-default navbar-fixed-top">
@@ -62,7 +29,7 @@
                 <p>Script adapted from <a href="http://simonsarris.com/blog/510-making-html5-canvas-useful">http://simonsarris.com/blog/510-making-html5-canvas-useful</a>.</p>
                 <p>And also used work from <a href="http://perfectionkills.com/exploring-canvas-drawing-techniques/">http://perfectionkills.com/exploring-canvas-drawing-techniques/</a>.</p>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="colour">Line Colour</label>
                         <select id="colour" class="form-control">
                             <option value="#000000">Black</option>
@@ -71,18 +38,27 @@
                             <option class="blue" value="#0000ff">Blue</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="width">Line Width</label>
                             <input type="number" class="form-control" id="width" value="10" min="4">
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label for="style">Line Style</label>
                         <select id="style" class="form-control">
                             <option value="solid">Solid</option>
                             <option value="dots">Dots</option>
                             <option value="dashed">Dashed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="arrow">Arrow Style</label>
+                        <select id="arrow" class="form-control">
+                            <option value="none">--------</option>
+                            <option value="start">&lt;-------</option>
+                            <option value="end">-------&gt;</option>
+                            <option value="both">&lt;------&gt;</option>
                         </select>
                     </div>
                 </div>
@@ -95,7 +71,7 @@
                 <img class="moveable" draggable="true" width="20" height="20" style="left: 15px; top: 120px;" id="GreenSquare" title="Green Square" alt="Green Square" src="img/GreenSquare.png" />
                 <!-- USING DATA URLS. Images generated here: http://websemantics.co.uk/online_tools/image_to_data_uri_convertor/ -->
                 <!--<img class="moveable" draggable="true" width="20" height="20" style="left: 15px; top: 60px;" id="RedCircle" title="Red Circle" alt="Red Circle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADVSURBVDiNrdRLCsIwFIXh30g7cje6D8XnlnwtQxzrPnRcwdZhN9COPU5SURtU2nvhTAL5yE3ChUAJYsFCsBdcBKXPxa/NBXFobwibCDKBfiQVjL9BXcH2D+gzG4ELgU2wKqtQm02xKqPXB0gNwJsgxr9mW6zKzFEd1aaGDugbgoOOoAB6RmBZ/z/t6u6A3BDMHXA2BE8OOBiCRwSR4GrwB7PnBBKMDcDh21n91GiKLWvNC5xg3WTSKDS+XuDRn3d6rbX5BY0EM8FOkAgKn8SvTQVRaO8DyOKEKpjOlJUAAAAASUVORK5CYII=" />-->
-                <!--<img class="moveable" draggable="true" width="20" height="20" style="left: 15px; top: 90px;" id="YellowTriangle" title="YellowTriangle" alt="YellowTriangle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAARCAYAAADdRIy+AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAANzAAADcwBgg+iugAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADVSURBVDiNrdIhS0NRGIfx5+KGCMJgsGBYsgvCqmXFYF2c2Sj7BkaxW0x+AOOSUVhdGNxsEhbGGAPTpo/FAxe5287d8Q9Pe/mlFyKm9JTLmNsY7Eh5V3Kl/h/gneJvg1SsrXwWwKVykgK+FLDQ875YtwRT+VYuqmI1ZbIBVBkrB1XA2y1Y6CYWaynzCHCmNGPApwgs9LgLO1fWFcAvpbMJy5S3ClhopGRl4PUeWKj/FztWPhLAqdIogvcJWOgBIFNOgRw43PkC27cCzjJlCFwlYgtA4PUHEJrEsmsgyvYAAAAASUVORK5CYII=" />-->
+                <!--<img class="moveable" draggable="true" width="20" height="17" style="left: 15px; top: 90px;" id="YellowTriangle" title="YellowTriangle" alt="YellowTriangle" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAARCAYAAADdRIy+AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAANzAAADcwBgg+iugAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADVSURBVDiNrdIhS0NRGIfx5+KGCMJgsGBYsgvCqmXFYF2c2Sj7BkaxW0x+AOOSUVhdGNxsEhbGGAPTpo/FAxe5287d8Q9Pe/mlFyKm9JTLmNsY7Eh5V3Kl/h/gneJvg1SsrXwWwKVykgK+FLDQ875YtwRT+VYuqmI1ZbIBVBkrB1XA2y1Y6CYWaynzCHCmNGPApwgs9LgLO1fWFcAvpbMJy5S3ClhopGRl4PUeWKj/FztWPhLAqdIogvcJWOgBIFNOgRw43PkC27cCzjJlCFwlYgtA4PUHEJrEsmsgyvYAAAAASUVORK5CYII=" />-->
                 <!--<img class="moveable" draggable="true" width="20" height="20" style="left: 15px; top: 120px;" id="GreenSquare" title="Green Square" alt="Green Square" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAiSURBVDiNY2T4z/CfgYqAiZqGjRo4auCogaMGjho4lAwEABsFAiYO37YmAAAAAElFTkSuQmCC" />-->
             </div>
         </div>

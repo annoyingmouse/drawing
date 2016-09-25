@@ -1,0 +1,37 @@
+#canvasHolder{
+    position: absolute;
+    width: 1140px;
+    height: 700px;
+    background-color: #f5f5f5;
+}
+#canvas{
+    position: relative;
+    left: 50px;
+    top: 50px;
+    width: 1040px;
+    height: 600px;
+}
+.moveable{
+    position: absolute;
+    cursor: pointer;
+}
+body {
+    padding-top: 60px;
+}
+#colour *.red{
+    background-color: #ff0000;
+    color: #00ffff;
+}
+#colour *.green{
+    background-color: #00ff00;
+    color: #ff00ff;
+}
+#colour *.blue{
+    background-color: #0000ff;
+    color: #ffff00;
+}
+#arrow{
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 900;
+    text-align-last:center;
+}

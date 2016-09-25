@@ -44,6 +44,10 @@ class CanvasElement {
     changeStyle(state: CanvasState, style: string) {
         console.log("Change line style");
     }
+
+    changeArrow(state: CanvasState, style: string) {
+        console.log("Change arrow style");
+    }
 }
 function containedWithin(obj: BoundingBox, x: number, y: number) {
     return (obj.horizontal.left <= x)
