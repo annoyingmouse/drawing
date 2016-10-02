@@ -32,9 +32,9 @@ var CanvasLine = (function (_super) {
         ctx.beginPath();
         ctx.translate(x, y);
         ctx.rotate(radians);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(15, 40);
-        ctx.lineTo(-15, 40);
+        ctx.moveTo(0, -7);
+        ctx.lineTo(12, 30);
+        ctx.lineTo(-12, 30);
         ctx.closePath();
         ctx.restore();
         ctx.fillStyle = this.lineColour;
@@ -68,8 +68,7 @@ var CanvasLine = (function (_super) {
             ctx.shadowBlur = 20;
             ctx.moveTo(this.x, this.y);
             for (var i = 0; i < this.points.length; i++) {
-                var point = this.points[i];
-                ctx.lineTo(point[0], point[1]);
+                ctx.lineTo(this.points[i][0], this.points[i][1]);
             }
             ctx.stroke();
         }
@@ -79,8 +78,7 @@ var CanvasLine = (function (_super) {
         ctx.strokeStyle = this.lineColour;
         ctx.moveTo(this.x, this.y);
         for (var i = 0; i < this.points.length; i++) {
-            var point = this.points[i];
-            ctx.lineTo(point[0], point[1]);
+            ctx.lineTo(this.points[i][0], this.points[i][1]);
         }
         ctx.stroke();
         this.selected = false;
